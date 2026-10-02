@@ -696,10 +696,27 @@ table.dt tbody tr:hover{background:var(--row-hover)}
 .rails .hb:hover .v,.rails .goalrow:hover .v,.rails .fp:hover .v{color:var(--ink)}
 .rails .hb:hover .rail-bar i,.rails .fp:hover .rail-bar i,
 .rails .goalrow:hover .rail-bar i{filter:drop-shadow(0 0 6px var(--blue))}
-/* Key Gauges and the Top Performance cards are Fleet Performance rows (.fp);
-   these only widen the name column and tint a row that is off goal. */
-.lbc .fp .who,.keyg .fp .who{flex-basis:124px}
-.lbc .fp .who b,.keyg .fp .who b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Top Performance cards are Fleet Performance rows (.fp); these widen the
+   name column and tint a row that is off goal. */
+.lbc .fp .who{flex-basis:124px}
+.lbc .fp .who b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Key Gauges: one ring per card. The arc starts at twelve o'clock and runs
+   clockwise; green is on goal, orange is short of it, red is far short. */
+.kg{height:100%;display:flex;align-items:center;justify-content:center;padding-bottom:4px;color:var(--green)}
+.kg.warn{color:var(--orange)}.kg.bad{color:var(--red)}
+.kgw{position:relative;height:min(100%,172px);aspect-ratio:1;max-width:100%}
+.kgw svg{display:block;width:100%;height:100%;transform:rotate(-90deg)}
+.kg-track{fill:none;stroke:var(--line-2);stroke-width:7}
+.kg-arc{fill:none;stroke:currentColor;stroke-width:7;stroke-linecap:round;
+  stroke-dasharray:var(--f) 100;transition:filter .16s}
+.in .kg-arc{animation:kgArc 1s cubic-bezier(.22,.9,.3,1) both}
+@keyframes kgArc{from{stroke-dasharray:0 100}}
+.kgw:hover .kg-arc{filter:drop-shadow(0 0 5px currentColor)}
+.kg-t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.kg-v{font-family:Archivo;font-size:28px;font-weight:500;letter-spacing:-.02em;line-height:1.1;
+  color:var(--ink);font-variant-numeric:tabular-nums}
+.kg-c{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+@media (prefers-reduced-motion:reduce){.in .kg-arc{animation:none}}
 .fp.warn .v{color:var(--orange)}
 .fp.warn .rail-bar i{background:var(--orange)}
 body.dragging .fp:hover{background:transparent}.hb{display:flex;align-items:center;gap:10px;padding:5.5px 8px;margin:0 -8px;
@@ -3409,20 +3426,22 @@ METRICS.revDelivered={ title:'Revenue Delivered', span:12, h:310, period:1, kind
       fmt:K$,lab:K$,alt:'Revenue delivered'}),
     det:[{label:'Linehaul ('+Math.round(RD_LINEHAUL*100)+'%)',v:SER.delivered.map(x=>x*RD_LINEHAUL)},
          {label:'Fuel surcharge ('+Math.round((1-RD_LINEHAUL)*100)+'%)',v:SER.delivered.map(x=>x*(1-RD_LINEHAUL))}]})
-};const KG_ROWS=[
-  {k:'Rev per mile',sub:'Goal $3.00',v:'$3.25',fill:100,tip:'Revenue per mile $3.25 \u00b7 goal $3.00 \u00b7 on target'},
-  {k:'Occupancy',   sub:'Goal 75%',  v:'67%',  fill:89, warn:1,tip:'Occupancy 67% \u00b7 goal 75% \u00b7 8 points short'},
-  {k:'Linehaul',    sub:'Goal 90%',  v:'91%',  fill:100,tip:'Linehaul is 91% of revenue \u00b7 goal 90% \u00b7 on target'},
-  {k:'Trucks',      sub:'Of 30',     v:'8',    fill:27, warn:1,tip:'8 of 30 trucks running \u00b7 22 idle or out of service'}
+};const KG_IDS=['kgRpm','kgOcc','kgLine','kgTrucks'];
+const KG_GAUGES=[
+  {id:'kgRpm',   title:'Revenue Per Mile',sub:'Goal $3.00',v:'$3.25',cap:'RPM',   fill:100,tone:'',    tip:'Revenue per mile $3.25 \u00b7 goal $3.00 \u00b7 on target'},
+  {id:'kgOcc',   title:'Occupancy',       sub:'Goal 75%',  v:'67%',  cap:'Use',   fill:67, tone:'warn',tip:'Occupancy 67% \u00b7 goal 75% \u00b7 8 points short'},
+  {id:'kgLine',  title:'Linehaul Share',  sub:'Goal 90%',  v:'91%',  cap:'Of rev',fill:91, tone:'',    tip:'Linehaul is 91% of revenue \u00b7 goal 90% \u00b7 on target'},
+  {id:'kgTrucks',title:'Trucks Running',  sub:'Of 30',     v:'8',    cap:'Of 30', fill:27, tone:'bad', tip:'8 of 30 trucks running \u00b7 22 idle or out of service'}
 ];
-METRICS.keyGauges={ title:'Key Gauges', span:12, h:310, tabs:['Against goal'],
-  body:()=>`<div class="rails keyg">${KG_ROWS.map((g,i)=>`
-    <div class="fp${g.warn?' warn':''}" data-row data-tip="${esc(g.tip)}">
-      <span class="who"><b>${esc(g.k)}</b><span>${esc(g.sub)}</span></span>
-      <span class="rail-bar"><i style="--w:${g.fill}%;animation-delay:${i*60}ms"></i></span>
-      <span class="v roll">${esc(g.v)}</span>
-    </div>`).join('')}</div>`
-};
+KG_GAUGES.forEach(g=>{
+  METRICS[g.id]={ title:g.title, sub:g.sub, span:6, h:310,
+    body:()=>`<div class="kg ${g.tone}" data-tip="${esc(g.tip)}"><div class="kgw">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="kg-track" cx="50" cy="50" r="42" pathLength="100"/>
+        <circle class="kg-arc" cx="50" cy="50" r="42" pathLength="100" style="--f:${g.fill}"/></svg>
+      <div class="kg-t"><span class="kg-v roll">${esc(g.v)}</span><span class="kg-c">${esc(g.cap)}</span></div>
+    </div></div>`
+  };
+});
 const REV_SUBS=[
   {id:'revCustomer',label:'Customer',icon:'people'},
   {id:'revCompanyDrivers',label:'Company Drivers',icon:'user'},
@@ -3444,7 +3463,10 @@ const GRAPH_TREE=[
   {id:'loadsInTransit',label:'Loads In Transit',icon:'transit'},
   {id:'companyStats',label:'Company Stats',icon:'pie'},
   {id:'revDelivered',label:'Revenue Delivered',icon:'cash',note:'Year total, weekly trend and linehaul share'},
-  {id:'keyGauges',label:'Key Gauges',icon:'target',note:'Against goal: RPM, occupancy, linehaul, trucks'},
+  {id:'kgRpm',label:'Revenue Per Mile',icon:'target',note:'Key gauge against the $3.00 goal'},
+  {id:'kgOcc',label:'Occupancy Gauge',icon:'target',note:'Key gauge against the 75% goal'},
+  {id:'kgLine',label:'Linehaul Share',icon:'target',note:'Key gauge against the 90% goal'},
+  {id:'kgTrucks',label:'Trucks Running',icon:'target',note:'Key gauge: trucks running of 30'},
   {id:'topDriver',label:'Top Performance',icon:'target',note:'Leaderboards, fuel and idle time',
    sub:LB_ORDER.map(k=>({id:k,label:LB_DEFS[k].title+' \u00b7 '+LB_DEFS[k].cap.split(' \u00b7')[0],
      icon:{drv:'user',disp:'user',truck:'truck',vendor:'cash'}[LB_DEFS[k].kind]||'chart'}))}
@@ -3461,7 +3483,7 @@ const TEMPLATES={
     c('dashboard',6,310,2),c('timeoff',6,310,2),c('news',6,310,2),
     c('goals',6,310,2),c('analytics',6,310,2),c('status',6,310,2),
     c('cpmEquip',6,310,2),c('fleetPerf',6,310,2),c('pole',6,310,2),
-    c('grossEquip',12,310,2),{...c('revDelivered',12,310),opt:{range:'ytd',period:'Weeks'}},c('keyGauges',12,310)],
+    c('grossEquip',12,310,2),{...c('revDelivered',12,310),opt:{range:'ytd',period:'Weeks'}},c('kgRpm',6,310),c('kgOcc',6,310),c('kgLine',6,310),c('kgTrucks',6,310)],
 
   'Accounting Profile':[c('revenue',12,300),c('revenueActualGoal',12,300),
     c('revCustomer',8,296),c('cpm',8,296),c('companyStats',8,296),
@@ -3543,10 +3565,17 @@ async function loadState(){
       STATE.kpiCards=2;
       const gp=STATE.profiles.find(p=>p.type==='General Profile (Default)');
       if(gp){
-        gp.cards=gp.cards.filter(x=>x.id!=='revDelivered'&&x.id!=='keyGauges');
+        gp.cards=gp.cards.filter(x=>x.id!=='revDelivered'&&x.id!=='keyGauges'&&!KG_IDS.includes(x.id));
         gp.cards.push({id:'revDelivered',span:12,h:310,opt:{range:'ytd',period:'Weeks'}},
-                      {id:'keyGauges',span:12,h:310});
+                      ...KG_IDS.map(id=>({id,span:6,h:310})));
       }
+    }
+    if((STATE.kpiCards||0)<3){           // Key Gauges: one card per gauge
+      STATE.kpiCards=3;
+      STATE.profiles.forEach(pr=>{
+        const i=pr.cards.findIndex(x=>x.id==='keyGauges'); if(i<0) return;
+        pr.cards.splice(i,1,...KG_IDS.map(id=>({id,span:6,h:310})));
+      });
     }
     /* a profile added to TEMPLATES after this layout was saved */
     PROFILE_TYPES.forEach(tp=>{
