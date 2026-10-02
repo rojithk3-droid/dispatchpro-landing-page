@@ -840,6 +840,18 @@ body.dragging .fp:hover{background:transparent}.hb{display:flex;align-items:cent
   display:grid;place-items:center;cursor:pointer;transition:.14s background}
 .dhead .x:hover{background:var(--btn-blue-hover)}
 .dnote{padding:10px 14px;font-size:11.5px;color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+.dact{display:flex;align-items:center;gap:20px;padding:12px 14px 10px;flex:0 0 auto}
+.dact button{background:0;border:0;color:var(--blue-ink);font-size:13px;cursor:pointer;padding:0}
+.dact button:hover{text-decoration:underline;font-weight:600}
+.dcount{margin-left:auto;font-size:11.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.dgroup{padding:12px 14px 6px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line-2);background:var(--tint)}
+.dchk{flex:0 0 18px;width:18px;height:18px;border-radius:5px;border:1.5px solid var(--hairline);
+  display:grid;place-items:center;color:#fff;background:var(--surface);transition:.12s}
+.dchk svg{opacity:0}
+.gitem:hover .dchk{border-color:var(--blue)}
+.dchk.on{background:var(--btn-blue);border-color:var(--btn-blue)}
+.dchk.on svg{opacity:1}
 .dlist{flex:1;overflow:auto;padding:2px 0 16px}
 .gitem{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--line-2);
   cursor:pointer;transition:.12s background}
@@ -1224,6 +1236,30 @@ td.tnum{font-variant-numeric:tabular-nums}
 .opt-l button[disabled],.opt-r button[disabled]{color:var(--ink-3);opacity:.6;
   cursor:not-allowed}
 .opt-l button[disabled]:hover,.opt-r button[disabled]:hover{background:0}
+.opt-r .eq{padding:2px 4px 6px;display:flex;flex-direction:column;gap:8px}
+.eq-chips{display:flex;flex-wrap:wrap;gap:5px}
+.eq-all{font-size:12px;color:var(--ink-3);padding:2px 0}
+.eq-chip{display:inline-flex;align-items:center;gap:4px;background:var(--blue-soft);color:var(--blue-ink);
+  border:1px solid var(--blue-line);border-radius:6px;padding:2px 3px 2px 8px;font-size:12px;font-weight:600}
+.opt-r .eq-chip button{width:18px;height:18px;padding:0;justify-content:center;border-radius:4px;
+  background:transparent;color:var(--blue-ink);font-size:14px;line-height:1}
+.opt-r .eq-chip button:hover{background:var(--blue-line)}
+.eq-q{width:100%;box-sizing:border-box;height:32px;border:1px solid var(--line);border-radius:6px;
+  background:var(--surface);color:var(--ink);font:inherit;font-size:12.5px;padding:0 9px;outline:0}
+.eq-q:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+.eq-list{display:flex;flex-direction:column;max-height:196px;overflow-y:auto;margin:0 -2px}
+.opt-r .eq-s{justify-content:space-between;padding:6px 8px}
+.opt-r .eq-s.on{background:var(--row-hover)}
+.eq-t{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0;text-align:left}
+.eq-t b{font-weight:600;font-size:12.5px}
+.eq-t small{font-size:10.5px;color:var(--ink-3);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+.eq-hd{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);padding:2px 8px 4px}
+.opt-r .eq-addall{color:var(--blue-ink);font-weight:600;font-size:12px;justify-content:center;border-top:1px solid var(--line-2);border-radius:0 0 6px 6px;margin-top:2px}
+.eq-none small{display:block;margin-top:3px;font-size:11px}
+.eq-s mark{background:transparent;color:var(--blue-ink);font-weight:700}
+.eq-plus{color:var(--ink-3);font-size:15px}
+.eq-none{font-size:12px;color:var(--ink-3);padding:8px}
+.opt-r .eq-clear{color:var(--blue-ink);font-weight:600;font-size:12px;justify-content:center}
 .opt-r{width:196px;padding:6px;overflow-y:auto;min-height:0}
 .opt-h{font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:.01em;padding:9px 10px 6px}
 .opt-r button{width:100%;display:flex;align-items:center;padding:9px 10px;border:0;border-radius:6px;
@@ -1362,7 +1398,12 @@ td.tnum{font-variant-numeric:tabular-nums}
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
   </div>
-  <p class="dnote">Pick a graph to add it to your landing page. Items with an arrow break down further.</p>
+  <div class="dact">
+    <button type="button" data-all="1">Select all</button>
+    <button type="button" data-all="0">Deselect all</button>
+    <span class="dcount" id="dcount"></span>
+  </div>
+  <p class="dnote">Tick a graph to put it on your landing page, untick to take it off. Items with an arrow break down further.</p>
   <div class="dlist" id="dlist"></div>
 </aside>
 
@@ -2624,7 +2665,8 @@ function effOpt(card){
     sort:   co.sort   || '',
     color:  co.color  || '',
     xaxis:  '',                       // time on the x axis is fixed; the old Category view is retired
-    trend:  !!co.trend
+    trend:  !!co.trend,
+    equip:  Array.isArray(co.equip)?co.equip:[]
   };
 }
 function seriesOf(sp){
@@ -2734,8 +2776,31 @@ function timeify(sp){
   }
   return out;
 }
+/* ---- equipment-type filter -----------------------------------------------
+   Category cards that plot equipment types (CPM, Gross, Trailer Type...) can be
+   narrowed to the types picked in their graph menu. The filter runs on the raw
+   spec, before the categories are rolled into periods. */
+const EQ_NAMES=EQUIP.map(x=>x[0]);
+function eqNames(m){
+  if(!m) return null;
+  if(m._eqn===undefined){
+    try{ const s=m.spec&&m.spec();
+      m._eqn=(s&&s.cat&&s.names&&s.names.some(n=>EQ_NAMES.includes(n)))?s.names.slice():null; }
+    catch(err){ m._eqn=null; }
+  }
+  return m._eqn;
+}
+function filterEquip(s,list){
+  if(!s||!s.cat||!list||!list.length) return s;
+  const keep=s.names.map((n,i)=>list.includes(n)?i:-1).filter(i=>i>=0);
+  if(!keep.length||keep.length===s.names.length) return s;
+  const pick=a=>(Array.isArray(a)&&a.length===s.names.length)?keep.map(i=>a[i]):a;
+  const o={...s,names:pick(s.names)};
+  ['cats','catsA','catsB','data','a','b'].forEach(k=>{ if(s[k]) o[k]=pick(s[k]); });
+  return o;
+}
 function getSpec(m,o){
-  const s=m.spec();
+  const s=filterEquip(m.spec(),o&&o.equip);
   return (o&&o.xaxis==='cat') ? s : timeify(s);
 }
 function hasTimeAxis(m){
@@ -3181,8 +3246,10 @@ status:{ title:'Status', span:6, h:296, period:'Today', graph:1,
 cpmEquip:{ title:'CPM By Equipment Type', span:6, h:296, period:1, graph:1,
   spec:()=>tcat(CAT.equipCpm,{time:{tot:'avg',agg:'avg'},type:'hbar',agg:'avg',slabel:'CPM',
     fmt:usd0,lab:usd0,alt:'CPM by equipment type'}),
-  body:()=>{ const max=Math.max(...EQUIP.map(x=>x[1]));
-    return `<div class="rails">`+EQUIP.map(([k,v],i)=>`
+  body:(cd)=>{ const pk=(cd&&cd.opt&&cd.opt.equip)||[];
+    const rows=pk.length?EQUIP.filter(x=>pk.includes(x[0])):EQUIP;
+    const max=Math.max(...rows.map(x=>x[1]));
+    return `<div class="rails">`+rows.map(([k,v],i)=>`
       <div class="hb" data-row><span class="k">${k}</span>
         <span class="rail-bar"><i style="--w:${(v/max*100).toFixed(1)}%;animation-delay:${i*60}ms"></i></span>
         <span class="v roll">${usd0(v)}</span></div>`).join('')+`</div>`;
@@ -3434,7 +3501,7 @@ const KG_GAUGES=[
   {id:'kgTrucks',title:'Trucks Running',  sub:'Of 30',     v:'8',    cap:'Of 30', fill:27, tone:'bad', tip:'8 of 30 trucks running \u00b7 22 idle or out of service'}
 ];
 KG_GAUGES.forEach(g=>{
-  METRICS[g.id]={ title:g.title, sub:g.sub, span:6, h:310,
+  METRICS[g.id]={ title:g.title, sub:g.sub, span:6, h:310, graph:1,
     body:()=>`<div class="kg ${g.tone}" data-tip="${esc(g.tip)}"><div class="kgw">
       <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="kg-track" cx="50" cy="50" r="42" pathLength="100"/>
         <circle class="kg-arc" cx="50" cy="50" r="42" pathLength="100" style="--f:${g.fill}"/></svg>
@@ -3636,9 +3703,8 @@ function buildCard(cd){
   if(cd.uh) el.dataset.uh='1';
 
   const per = `<button class="copt" aria-haspopup="true" aria-label="Card options" title="Options">${svg('dots',16,2)}</button>`;
-  const gph = isGraphCard(m)
-    ? `<button class="cgraph" aria-haspopup="true" aria-label="Graph settings"
-         title="Date range, time period, chart type and labels">${svg('chart',15,2)}</button>` : '';
+  const gph = `<button class="cgraph" aria-haspopup="true" aria-label="Graph settings"
+         title="Date range, time period, chart type and labels">${svg('chart',15,2)}</button>`;
   const tabs = m.tabs ? `<div class="tabs">${m.tabs.map((t,i)=>
     `<button class="${i?'':'on'}">${t}</button>`).join('')}${
     m.tabsExtra?m.tabsExtra():''}</div>` : '';
@@ -4895,6 +4961,7 @@ const OPT_PANES={
   compare:{h:'Compare Against',key:'cmp',opts:CMP_OPTS},
   sort:{h:'Graph Options',key:'sort',opts:SORT_OPTS},
   color:{h:'Graph Color',key:'color',opts:COLOR_OPTS},
+  equip:{h:'Equipment Type',key:'equip',opts:[]},
   xaxis:{h:'X Axis',key:'xaxis',opts:[['','Time Period (default)'],['cat','Category']]},
   card:{h:'Card Layout',key:'_act',opts:[['full','Full'],['half','Half'],
         ['quarter','Quarter'],['eighth','Eighth'],['tall','Reset height']]}
@@ -4929,14 +4996,14 @@ function doCardAct(card,act){
 }
 const PANE_LABEL={range:'Date Range',period:'Time Period',type:'Chart Type',
                   labels:'Label Choices',compare:'Compare Against',
-                  sort:'Graph Options',color:'Graph Color',xaxis:'X Axis',pin:'Pin',card:'Card Layout',
+                  sort:'Graph Options',color:'Graph Color',xaxis:'X Axis',equip:'Equipment Type',pin:'Pin',card:'Card Layout',
                   remove:'Remove From Page'};
 /* Pin is a command rather than a pane — it opens its own dialog. */
 const PANE_CMD={pin:1,remove:1};
 /* The blue graph icon opens the chart settings; the three dots keep the card
    itself. Cards with no chart have nowhere else to put Date Range, so it
    stays on their dots menu. */
-const CHART_PANES=['range','period','type','color','labels','compare','sort'];
+const CHART_PANES=['range','equip','period','type','color','labels','compare','sort'];
 function panesFor(card,src){
   const m=METRICS[card.dataset.id]||{};
   if(src==='chart') return CHART_PANES;          // always all four
@@ -4951,11 +5018,97 @@ function closeOpt(){
   optCard=null; optAnchor=null;
 }
 function cardOpt(card){ try{ return JSON.parse(card.dataset.opt||'{}'); }catch(e){ return {}; } }
+/* Equipment Type pane: chips for what is picked, a search box, and a
+   suggestion list that narrows as you type. Several types can be picked. */
+/* What each type is, and the other names dispatchers call it — so "frig",
+   "53", "lowboy" or "fb" all find the right one. */
+const EQ_INFO={'Box Truck':['Straight truck · 16–26 ft','straight cube bobtail'],
+  'Container':['Intermodal · 20 / 40 ft','intermodal chassis port drayage'],
+  'Dry Van':['Enclosed · 53 ft','dv van enclosed 53 trailer'],
+  'Flat Bed':['Open deck · 48 ft','flatbed fb open deck tarp'],
+  'Reefer':['Temperature controlled','refrigerated rf frig cold temp'],
+  'RGN':['Removable gooseneck · heavy haul','removable gooseneck lowboy heavy haul oversize'],
+  'Step Deck':['Drop deck · tall loads','stepdeck drop deck sd lowdeck']};
+const eqLev=(a,b)=>{ const d=Array.from({length:a.length+1},(_,i)=>[i]);
+  for(let j=1;j<=b.length;j++) d[0][j]=j;
+  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++)
+    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return d[a.length][b.length]; };
+/* Rank one type against the typed text. Every word you type has to land
+   somewhere; the best landing wins: start of the name, then inside it, then
+   an alias, then a typo, then letters in order ("stpd"). 0 means no match. */
+function eqScore(name,q){
+  const toks=q.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); if(!toks.length) return 1;
+  const low=name.toLowerCase(), words=low.split(/[^a-z0-9]+/), comp=low.replace(/[^a-z0-9]/g,'');
+  const al=((EQ_INFO[name]||[])[1]||'').split(' ');
+  let tot=0;
+  for(const t of toks){
+    let s=0;
+    if(comp===t) s=130;
+    else if(comp.startsWith(t)) s=110;
+    else if(words.some(w=>w.startsWith(t))) s=95;
+    else if(comp.includes(t)) s=70;
+    else if(al.some(w=>w===t)) s=60;
+    else if(al.some(w=>w.startsWith(t))) s=50;
+    else if(t.length>=4&&words.concat(al).some(w=>w.length>=t.length&&eqLev(t,w.slice(0,t.length))<=1)) s=30;
+    else { let i=0; for(const ch of comp){ if(ch===t[i]) i++; } if(t.length>=2&&i===t.length) s=15; }
+    if(!s) return 0;
+    tot+=s;
+  }
+  return tot;
+}
+/* Mark the letters the typed text matched, ignoring spaces, so "flatbed"
+   lights up "Flat Bed". */
+function eqMark(name,q){
+  const toks=q.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+  const idx=[], comp=[]; [...name].forEach((ch,i)=>{ if(/[a-z0-9]/i.test(ch)){ comp.push(ch.toLowerCase()); idx.push(i); } });
+  const cs=comp.join(''), on=new Set();
+  toks.forEach(t=>{ const at=cs.indexOf(t); if(at>=0) for(let k=at;k<at+t.length;k++) on.add(idx[k]); });
+  if(!on.size) return esc(name);
+  let out='', open=false;
+  [...name].forEach((ch,i)=>{ const m=on.has(i)||(open&&/\s/.test(ch)&&on.has(i+1));
+    if(m&&!open){ out+='<mark>'; open=true; } else if(!m&&open){ out+='</mark>'; open=false; }
+    out+=esc(ch); });
+  return out+(open?'</mark>':'');
+}
+function eqSuggest(MET,co,q){
+  const have=co.equip||[], qq=q.trim();
+  const hit=(eqNames(MET)||[]).filter(n=>!have.includes(n))
+    .map(n=>({n,s:eqScore(n,qq)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+  if(!hit.length) return `<div class="eq-none">${qq?`Nothing matches “${esc(qq)}”<small>Try Dry Van, Reefer, Flat Bed…</small>`
+    :'Every type is selected'}</div>`;
+  const head=`<div class="eq-hd">${qq?hit.length+(hit.length>1?' matches':' match'):'Suggestions'}</div>`;
+  const rows=hit.map(({n},i)=>`<button type="button" class="eq-s${i?'':' on'}" data-eq="add" data-v="${esc(n)}">
+      <span class="eq-t"><b>${eqMark(n,qq)}</b><small>${esc((EQ_INFO[n]||[''])[0])}</small></span><span class="eq-plus">+</span></button>`).join('');
+  const all=(qq&&hit.length>1)?`<button type="button" class="eq-addall" data-eq="addall" data-v="${esc(hit.map(x=>x.n).join('|'))}">Add all ${hit.length}</button>`:'';
+  return head+rows+all;
+}
+function eqPane(MET,co){
+  const have=co.equip||[];
+  return `<div class="eq">
+    <div class="eq-chips">${have.length?have.map(n=>`<span class="eq-chip">${esc(n)}<button type="button" data-eq="del" data-v="${esc(n)}" aria-label="Remove ${esc(n)}">&times;</button></span>`).join('')
+      :'<span class="eq-all">All equipment types</span>'}</div>
+    <input class="eq-q" data-eqq type="search" placeholder="Search equipment type" autocomplete="off" aria-label="Search equipment type">
+    <div class="eq-list" data-eqlist>${eqSuggest(MET,co,'')}</div>
+    ${have.length?'<button type="button" class="eq-clear" data-eq="clear">Clear filter</button>':''}
+  </div>`;
+}
+function setEquip(list){
+  const co=cardOpt(optCard);
+  if(list.length) co.equip=list; else delete co.equip;
+  optCard.dataset.opt=JSON.stringify(co);
+  syncCards();
+  const el=rebuildCard(optCard);
+  optCard=el; optCard.classList.add('menuopen');
+  optAnchor=$('.cgraph',el)||$('.copt',el);
+  renderOpt();
+  const q=optMenu.querySelector('[data-eqq]'); if(q) q.focus();
+}
 function renderOpt(){
   if(!optCard) return;
   const MET=METRICS[optCard.dataset.id]||{};
   const usable=k=>!PANE_CMD[k] && (!CHART_PANES.includes(k)||paneAllow(MET,k));
-  const shown=optPanes.filter(k=>k!=='xaxis'||hasTimeAxis(MET));   // X Axis only where it means something
+  const shown=optPanes.filter(k=>k==='equip'?!!eqNames(MET):(k!=='xaxis'||hasTimeAxis(MET)));   // X Axis only where it means something
   if(!optPanes.includes(optPane)||!usable(optPane))
     optPane=optPanes.find(usable)||optPanes.find(k=>!PANE_CMD[k])||optPanes[0];
   const eff=effOpt(optCard), co=cardOpt(optCard), P=OPT_PANES[optPane];
@@ -4969,6 +5122,7 @@ function renderOpt(){
             : optPane==='compare'? (CMP_NAME[co.cmp||'']||'Off')
             : optPane==='sort'   ? (SORT_NAME[co.sort||'']||'Default')
             : optPane==='color'  ? (COLOR_NAME[co.color||'']||'Chart Default')
+            : optPane==='equip'  ? ((co.equip||[]).length ? co.equip.length+' selected' : 'All types')
             : optPane==='xaxis'  ? (co.xaxis==='cat' ? 'Category' : 'Time Period')
             : (P.opts.find(o=>o[0]===(optPane==='type'?eff.type:eff.labels))||['','Chart Default'])[1];
   const foot = optPanes.includes('type')     // only the graph-icon menu
@@ -4983,6 +5137,7 @@ function renderOpt(){
     </div>
     <div class="opt-r">
       <div class="opt-h">${now? P.h+' &middot; Now '+esc(String(now)) : P.h}</div>
+      ${optPane==='equip' ? eqPane(MET,co) : ''}
       ${P.opts.map(([v,l])=>`<button type="button" data-set="${P.key}" data-v="${v}" class="${v===sel?'on':''}"${
         P.key==='type'&&!typeAllow(MET,v)?' disabled':''}>${P.key==='color'
           ?`<i class="csw${v?'':' none'}"${v?` style="background:${CHART_COLORS[v]}"`:''}></i>`:''}${l}</button>`).join('')}
@@ -5020,6 +5175,27 @@ function openOpt(card,btn,src){
       const w=$('.chart-wrap',optCard); if(w) paint(w,true);
       toast(`Trendline ${cb.checked?'on':'off'} &middot; <b>${esc($('h3',optCard).textContent)}</b>`);
     });
+    optMenu.addEventListener('input',ev=>{
+      const q=ev.target.closest('[data-eqq]'); if(!q||!optCard) return;
+      const l=optMenu.querySelector('[data-eqlist]');
+      if(l) l.innerHTML=eqSuggest(METRICS[optCard.dataset.id]||{},cardOpt(optCard),q.value);
+    });
+    optMenu.addEventListener('keydown',ev=>{
+      const q=ev.target.closest('[data-eqq]'); if(!q||!optCard) return;
+      const have=(cardOpt(optCard).equip||[]).slice();
+      const rows=[...optMenu.querySelectorAll('.eq-s')];
+      if(ev.key==='ArrowDown'||ev.key==='ArrowUp'){
+        ev.preventDefault(); if(!rows.length) return;
+        const at=Math.max(0,rows.findIndex(r=>r.classList.contains('on')));
+        const nx=(at+(ev.key==='ArrowDown'?1:-1)+rows.length)%rows.length;
+        rows.forEach((r,i)=>r.classList.toggle('on',i===nx)); rows[nx].scrollIntoView({block:'nearest'});
+      } else if(ev.key==='Escape'&&q.value){ ev.preventDefault(); ev.stopPropagation(); q.value='';
+        optMenu.querySelector('[data-eqlist]').innerHTML=eqSuggest(METRICS[optCard.dataset.id]||{},cardOpt(optCard),'');
+      } else if(ev.key==='Enter'){
+        const f=optMenu.querySelector('.eq-s.on'); ev.preventDefault();
+        if(f){ have.push(f.dataset.v); setEquip(have); }
+      } else if(ev.key==='Backspace'&&!q.value&&have.length){ have.pop(); setEquip(have); }
+    });
     optMenu.addEventListener('click',ev=>{
       /* renderOpt() replaces innerHTML, so the clicked node is detached by the
          time this event reaches document — where the outside-click guard would
@@ -5034,6 +5210,18 @@ function openOpt(card,btn,src){
           closeOpt(); openPinModal(card); return;
         }
         optPane=l.dataset.pane; renderOpt(); return;
+      }
+      const eq=ev.target.closest('[data-eq]');
+      if(eq){
+        if(!optCard||!optCard.isConnected){ closeOpt(); return; }
+        const have=(cardOpt(optCard).equip||[]).slice(), v=eq.dataset.v, a=eq.dataset.eq;
+        if(a==='add'&&!have.includes(v)) have.push(v);
+        if(a==='addall') v.split('|').forEach(n=>{ if(!have.includes(n)) have.push(n); });
+        if(a==='del') have.splice(have.indexOf(v),1);
+        if(a==='clear') have.length=0;
+        setEquip(have);
+        toast(`<b>${esc($('h3',optCard).textContent)}</b> &middot; ${have.length?esc(have.join(', ')):'all equipment types'}`);
+        return;
       }
       const r=ev.target.closest('[data-set]'); if(!r||r.disabled) return;
       if(!optCard||!optCard.isConnected){ closeOpt(); return; }
@@ -5107,7 +5295,8 @@ function toggleGPanel(on){
   gpanel.classList.toggle('show',show);
   btnGraphs.setAttribute('aria-expanded',String(show));
 }
-btnGraphs.addEventListener('click',ev=>{ ev.stopPropagation(); toggleGPanel(); });
+/* The Graphs button opens the side panel, which carries the checkable list. */
+btnGraphs.addEventListener('click',ev=>{ ev.stopPropagation(); openDrawer(); });
 document.addEventListener('click',ev=>{ if(!ev.target.closest('.gwrap')) toggleGPanel(false); });
 function setCard(id,on){
   const p=active();
@@ -5191,27 +5380,49 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape'){
   toggleGPanel(false); closeMaster(); } });
 
 function onBoard(id){ return active().cards.some(x=>x.id===id); }
+const CHK='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>';
 function renderDrawer(){
-  $('#dlist').innerHTML=GRAPH_TREE.map((g,i)=>{
+  const keep=$('#dlist').scrollTop;
+  const inTree=new Set();
+  GRAPH_TREE.forEach(g=>{ inTree.add(g.id); (g.sub||[]).forEach(s=>inTree.add(s.id)); });
+  const tree=GRAPH_TREE.map((g,i)=>{
     const added=onBoard(g.id);
     const row=`
       <div class="gitem${added?' added':''}" data-add="${g.id}" data-i="${i}">
         <span class="gi">${svg(g.icon,19,1.7)}</span>
         <span class="gn">${esc(g.label)}${g.note?`<span style="display:block;font-weight:450;font-size:10.5px;color:var(--ink-3)">${esc(g.note)}</span>`:''}</span>
-        ${added?`<span class="gi" style="color:var(--green)" title="Already on this page">${svg('chev',15,2.4)}</span>`:
-                `<span class="add">${svg('plus',15,2.2)}</span>`}
         ${g.sub?`<span class="chev" data-exp="${i}">${svg('chev',15,2.2)}</span>`:''}
+        <span class="dchk${added?' on':''}">${CHK}</span>
       </div>`;
     const sub=g.sub?`<div class="gsub" data-sub="${i}">${g.sub.map(s=>`
       <div class="gitem${onBoard(s.id)?' added':''}" data-add="${s.id}">
         <span class="gi">${svg(s.icon,17,1.7)}</span>
         <span class="gn">${esc(s.label)}</span>
-        ${onBoard(s.id)?`<span class="gi" style="color:var(--green)">${svg('chev',14,2.4)}</span>`:
-                        `<span class="add">${svg('plus',14,2.2)}</span>`}
+        <span class="dchk${onBoard(s.id)?' on':''}">${CHK}</span>
       </div>`).join('')}</div>`:'';
     return row+sub;
   }).join('');
+  /* the cards that are not graphs — messages, time off, news and the rest */
+  const rest=allMetricIds().filter(id=>!inTree.has(id));
+  const other=rest.length?`<div class="dgroup">Page cards</div>`+rest.map(id=>{
+    const added=onBoard(id);
+    return `<div class="gitem${added?' added':''}" data-add="${id}">
+        <span class="gi">${svg('chart',17,1.7)}</span>
+        <span class="gn">${esc(METRICS[id].title)}</span>
+        <span class="dchk${added?' on':''}">${CHK}</span></div>`;
+  }).join(''):'';
+  $('#dlist').innerHTML=`<div class="dgroup">Graphs by category</div>`+tree+other;
+  $('#dlist').scrollTop=keep;
+  const n=active().cards.length;
+  $('#dcount').textContent=`${n} of ${allMetricIds().length} on this page`;
 }
+$('#drawer').addEventListener('click',ev=>{
+  const all=ev.target.closest('[data-all]'); if(!all) return;
+  const on=all.dataset.all==='1';
+  allMetricIds().forEach(id=>setCard(id,on));
+  saveState(); renderBoard(); renderDrawer(); renderGPanel();
+  toast(on?'Every card added to this page':'All cards removed &mdash; pick the ones you want');
+});
 $('#dlist').addEventListener('click',ev=>{
   const exp=ev.target.closest('[data-exp]');
   if(exp){
@@ -5221,7 +5432,11 @@ $('#dlist').addEventListener('click',ev=>{
     return;
   }
   const it=ev.target.closest('[data-add]'); if(!it) return;
-  addMetric(it.dataset.add);
+  const id=it.dataset.add;
+  if(onBoard(id)){                                  // ticked: untick takes it off
+    setCard(id,false); saveState(); renderBoard(); renderDrawer(); renderGPanel();
+    toast(`Removed <b>${esc(METRICS[id].title)}</b>`);
+  } else addMetric(id);
 });
 
 function addMetric(id){
