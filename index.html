@@ -158,6 +158,11 @@ button,input,select{font-family:inherit;font-size:13px;color:inherit}
 .card.fresh{animation:cardIn .42s cubic-bezier(.22,.9,.3,1) both}
 .rail-bar{position:relative;height:13px;border-radius:3px;background:var(--line-2);overflow:hidden}
 .rail-bar i{position:absolute;inset:0 auto 0 0;width:var(--w);border-radius:3px;background:var(--blue);display:block}
+/* a picked Graph Color wins over the default blue and the orange "off goal" tint */
+.card[data-gc].card .rail-bar i{background:var(--gc)}
+.card[data-gc].card .rails .rail-bar:hover i,.card[data-gc].card .rails .fp:hover .rail-bar i,
+.card[data-gc].card .rails .hb:hover .rail-bar i,.card[data-gc].card .rails .goalrow:hover .rail-bar i{filter:drop-shadow(0 0 6px var(--gc))}
+.card[data-gc].card .kg{color:var(--gc)}
 .in .rail-bar i{animation:growW 1s cubic-bezier(.22,.9,.3,1) both}
 
 @media (prefers-reduced-motion:reduce){
@@ -302,6 +307,22 @@ button,input,select{font-family:inherit;font-size:13px;color:inherit}
   color:var(--blue-ink)}
 .pitem.on>.prow{font-weight:400}
 .pitem .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#menuCreate{width:300px;max-width:calc(100vw - 20px);left:0;right:auto}
+.pitem .pt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.pitem .pd{font-size:11px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pitem[hidden],.pgroup[hidden],.pnone[hidden]{display:none}
+.menu h5.pgroup{display:flex;align-items:center;gap:5px;padding:10px 16px 4px;font-size:10.5px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase}
+.psearch{padding:8px 12px 4px;position:sticky;top:0;background:var(--surface);z-index:1}
+.psearch input{width:100%;box-sizing:border-box;height:32px;border:1px solid var(--line);border-radius:7px;
+  background:var(--surface);color:var(--ink);font:inherit;font-size:12.5px;padding:0 10px;outline:0}
+.psearch input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(57,139,255,.2)}
+.pnone{padding:14px 16px;font-size:12.5px;color:var(--ink-3)}
+.pfav{width:22px;height:22px;border:0;border-radius:5px;background:0;color:var(--ink-3);display:grid;
+  place-items:center;cursor:pointer;flex:0 0 22px;opacity:0;transition:.12s opacity,.12s background,.12s color}
+.pitem:hover .pfav,.pfav:focus-visible,.pfav.on{opacity:1}
+.pfav:hover{background:var(--blue-soft);color:var(--blue-ink)}
+.pfav.on{color:#E5A100}.pfav.on svg{fill:currentColor}
 .pitem .tag{color:var(--ink-3);font-weight:400;font-size:11.5px;flex:0 0 auto}
 .pedit{width:22px;height:22px;margin-right:4px;border:0;border-radius:5px;background:0;
   color:var(--ink-3);display:grid;place-items:center;cursor:pointer;flex:0 0 22px;
@@ -1139,6 +1160,42 @@ td.tnum{font-variant-numeric:tabular-nums}
 .np-opt.on{border-color:var(--blue);background:var(--blue-soft);
   box-shadow:0 0 0 1px var(--blue) inset}
 .np-field{margin-top:14px}
+.ccmodal{width:min(560px,94vw);padding:0}
+.cc-prev{margin:0 22px;height:200px;border:1px solid var(--line);border-radius:10px;background:var(--tint);padding:8px 10px;box-sizing:border-box}
+.card.ccp{height:100%;display:flex;flex-direction:column;border:0;background:transparent;box-shadow:none;padding:0;animation:none}
+.cc-body{padding:4px 22px 6px}
+.cc-f{margin-top:14px}
+.cc-f>b{display:block;font-size:12.5px;font-weight:600;margin-bottom:7px}
+.cc-f>b small{font-weight:400;color:var(--ink-3);margin-left:6px}
+.cc-chips{display:flex;flex-wrap:wrap;gap:6px}
+.cc-chip{height:32px;padding:0 13px;border:1px solid var(--line);border-radius:8px;background:var(--surface);
+  color:var(--ink);font:inherit;font-size:12.5px;cursor:pointer;transition:.12s}
+.cc-chip:hover:not([disabled]){border-color:var(--blue);background:var(--blue-soft)}
+.cc-chip.on{border-color:var(--blue);background:var(--blue-soft);color:var(--blue-ink);font-weight:600}
+.cc-chip[disabled]{opacity:.4;cursor:not-allowed}
+.cc-body input[type=text]{width:100%;box-sizing:border-box;height:38px;border:1px solid var(--line);border-radius:8px;
+  background:var(--surface);color:var(--ink);font:inherit;font-size:13px;padding:0 12px;outline:0}
+.cc-body input[type=text]:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(57,139,255,.2)}
+.cc-hint{margin:12px 0 4px;font-size:11.5px;color:var(--ink-3);line-height:1.5}
+.cc-foot{gap:10px}
+.cc-foot .btn{margin-left:0}.cc-foot .btn.pri{margin-left:0}
+.cc-del{margin-right:auto;background:0;border:0;color:var(--red);font:inherit;font-size:12.5px;cursor:pointer;padding:0}
+.cc-del:hover{text-decoration:underline}
+.cc-del[hidden]{display:none}
+.gitem .dedit{width:22px;height:22px;border:0;border-radius:5px;background:0;color:var(--ink-3);display:grid;
+  place-items:center;cursor:pointer;flex:0 0 22px;opacity:0;transition:.12s}
+.gitem:hover .dedit,.dedit:focus-visible{opacity:1}
+.dedit:hover{background:var(--surface);color:var(--blue-ink)}
+.gitem.cc-new .gn{color:var(--blue-ink)}
+.np-add{padding:10px 0 8px;border-bottom:1px solid var(--line-2);margin-bottom:6px}
+.np-add input{width:100%;box-sizing:border-box;height:34px;border:1px solid var(--line);border-radius:8px;
+  background:var(--surface);color:var(--ink);font:inherit;font-size:12.5px;padding:0 11px;outline:0}
+.np-add input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(57,139,255,.2)}
+.np-sug{display:flex;flex-direction:column;margin-top:6px;max-height:210px;overflow-y:auto}
+.np-s{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:6px 9px;border:0;
+  border-radius:6px;background:0;color:var(--ink);font:inherit;cursor:pointer;text-align:left}
+.np-s:hover,.np-s.on{background:var(--row-hover)}
+.np-lbl{display:block;margin:12px 0 5px;font-size:11.5px;font-weight:600;color:var(--ink-3)}
 .np-field input,.np-field select{width:100%;height:38px;border:1px solid var(--line);
   border-radius:8px;background:var(--surface);color:var(--ink);padding:0 11px;font:inherit;font-size:13px}
 .np-field input:focus,.np-field select:focus{outline:0;border-color:var(--blue);
@@ -1422,7 +1479,7 @@ td.tnum{font-variant-numeric:tabular-nums}
       <div class="np-opts">
         <button type="button" class="np-opt on" data-np="new">
           <b>Create New Profile</b>
-          <span>Saves the board as it stands now as a new landing page.</span>
+          <span>Makes a new landing page from the board, a template, a blank page or a copy of one of your profiles.</span>
         </button>
         <button type="button" class="np-opt" data-np="over">
           <b>Save Over Old Profile</b>
@@ -1439,6 +1496,24 @@ td.tnum{font-variant-numeric:tabular-nums}
       <button type="button" class="btn pri" id="npSave">Save</button>
     </div>
     <div class="np-list" id="npList"></div>
+  </div>
+</div>
+
+<div class="modalwrap" id="ccWrap">
+  <div class="modal ccmodal" role="dialog" aria-modal="true" aria-labelledby="ccTitle">
+    <div class="np-head">
+      <h3 id="ccTitle">Create a chart</h3>
+      <button class="np-x" id="ccClose" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="cc-prev" id="ccPrev" aria-label="Preview"></div>
+    <div class="cc-body" id="ccBody"></div>
+    <div class="np-foot cc-foot">
+      <button type="button" class="cc-del" id="ccDel" hidden>Delete chart</button>
+      <button type="button" class="btn" id="ccCancel">Cancel</button>
+      <button type="button" class="btn pri" id="ccSave">Add to this page</button>
+    </div>
   </div>
 </div>
 
@@ -2664,7 +2739,7 @@ function effOpt(card){
     cmp:    co.cmp    || '',
     sort:   co.sort   || '',
     color:  co.color  || '',
-    xaxis:  '',                       // time on the x axis is fixed; the old Category view is retired
+    xaxis:  (met&&met.byCat)?'cat':'',                       // time on the x axis is fixed; the old Category view is retired
     trend:  !!co.trend,
     equip:  Array.isArray(co.equip)?co.equip:[]
   };
@@ -3226,6 +3301,11 @@ news:{ title:'Dawson News', span:6, h:296, cls:'newscard', flush:1, bare:1,
 },
 
 analytics:{ title:'Analytics', span:6, h:296, period:1,
+  /* Seven counts as they stand now — a share or a ranking, never a trend, so
+     a date range and a time period are not offered. */
+  only:{panes:['type','color','labels','sort'],types:['','bar','hbar','doughnut']},
+  spec:()=>({type:'bar',cat:1,names:ANALYTICS.map(a=>a.k),data:ANALYTICS.map(a=>a.v),agg:'avg',
+    slabel:'Count',fmt:v=>String(Math.round(v)),lab:v=>String(Math.round(v)),alt:'Analytics counts'}),
   body:()=>`<div class="mlist">${ANALYTICS.map(a=>`
     <div class="r" data-row><span class="k">${a.k}</span>
       <span class="v"><button class="drill roll" data-ds="${a.ds}">${a.v}</button></span></div>`).join('')}</div>`
@@ -3234,8 +3314,8 @@ analytics:{ title:'Analytics', span:6, h:296, period:1,
 status:{ title:'Status', span:6, h:296, period:'Today', graph:1,
   /* Seven unrelated counts. A doughnut shows their share of the whole; a line
      or a time period over them would mean nothing, so only these are offered. */
-  only:{panes:['type','color'],types:['','doughnut']},
-  spec:()=>tcat(CAT.statusMix,{type:'doughnut',agg:'avg',slabel:'Open items',
+  only:{panes:['type','color','labels','sort'],types:['','bar','hbar','doughnut']},
+  spec:()=>tcat(CAT.statusMix,{type:'bar',agg:'avg',slabel:'Open items',
     fmt:v=>String(Math.round(v)),lab:v=>String(Math.round(v)),
     alt:'Status mix'}),
   body:()=>`<div class="mlist">${STATUS.map(s=>`
@@ -3268,7 +3348,7 @@ fleetPerf:{ title:'Fleet Performance', span:6, h:296, graph:1,
   }
 },
 
-grossEquip:{ title:'Gross By Equipment Type', span:6, h:296, period:1, kind:'chart', kpi:{v:'$ 31,725',d:'12.4%',dir:'up'},
+grossEquip:{ title:'Gross By Equipment Type', span:6, h:296, period:1, kind:'chart', defType:'area', kpi:{v:'$ 31,725',d:'12.4%',dir:'up'},
   spec:()=>tcat(CAT.equipGross,{time:{tot:'sum',agg:'sum',fmt:K$,lab:K$},type:'bar',agg:'avg',slabel:'Gross',
     fmt:t=>t?'$ '+(t/1000).toFixed(1)+'k':'$ 0',lab:usd0,alt:'Gross by equipment type'})
 },
@@ -3688,6 +3768,13 @@ const chartRO=new ResizeObserver(ents=>ents.forEach(en=>{
 }));
 
 
+/* Graph Color on cards drawn from their own markup (rail bars, gauge rings):
+   the chart engine recolours SVG charts, these follow the card's --gc. */
+function applyCardColor(el){
+  let c=''; try{ c=(JSON.parse(el.dataset.opt||'{}')||{}).color||''; }catch(err){}
+  if(CHART_COLORS[c]){ el.dataset.gc=c; el.style.setProperty('--gc',CHART_COLORS[c]); }
+  else { delete el.dataset.gc; el.style.removeProperty('--gc'); }
+}
 function buildCard(cd){
   const m=METRICS[cd.id]; if(!m) return null;
   const el=document.createElement('section');
@@ -3700,6 +3787,7 @@ function buildCard(cd){
   el.dataset.rows=rws;
   el.style.height=heightFor(cd.r||rowsFor(cd.h||296))+'px';
   el.dataset.opt=JSON.stringify(cd.opt||{});
+  applyCardColor(el);
   if(cd.uh) el.dataset.uh='1';
 
   const per = `<button class="copt" aria-haspopup="true" aria-label="Card options" title="Options">${svg('dots',16,2)}</button>`;
@@ -3929,20 +4017,74 @@ let NP={mode:'new',off:new Set()};
 function openNewProfile(editId){
   /* With an id, the dialog opens on that profile so it can be renamed and
      re-saved; without one it starts a new page. */
-  NP={mode:editId?'over':'new',off:new Set(),target:editId||null};
+  NP={mode:editId?'over':'new',off:new Set(),target:editId||null,src:'current',name:'',auto:'',extra:[]};
   drawNP();
   npWrap.classList.add('show');
   setTimeout(()=>{ const i=$('#npName'); if(i) i.focus(); },60);
 }
 function closeNewProfile(){ npWrap.classList.remove('show'); }
-function npCards(){ return active().cards.filter(c=>!NP.off.has(c.id)); }
+/* A new page can start from the board as it is, from nothing, from one of the
+   built-in templates, or as a copy of any profile. Saving over an old profile
+   always uses the board as it is. */
+function npBaseCards(){
+  const s=(NP.mode==='new'&&NP.src)||'current';
+  if(s==='blank') return [];
+  if(s.startsWith('tpl:')) return (TEMPLATES[s.slice(4)]||[]).filter(c=>METRICS[c.id]);
+  if(s.startsWith('prof:')){ const pr=STATE.profiles.find(x=>x.id===s.slice(5)); return pr?pr.cards.filter(c=>METRICS[c.id]):[]; }
+  return active().cards;
+}
+/* Charts added from the search sit after the ones the page started with. */
+function npSrcCards(){
+  const base=npBaseCards(), have=new Set(base.map(c=>c.id));
+  const extra=(NP.extra||[]).filter(id=>METRICS[id]&&!have.has(id)).map(id=>({id,span:METRICS[id].span,h:METRICS[id].h}));
+  return base.concat(extra);
+}
+function npAliasOf(id){
+  const g=[];
+  GRAPH_TREE.forEach(t=>{ if(t.id===id) g.push(t.label,t.note||''); (t.sub||[]).forEach(s=>{ if(s.id===id) g.push(s.label); }); });
+  const cc=(STATE.charts||[]).find(x=>x.id===id);
+  if(cc) g.push('custom chart my chart',ccName(cc.measure,cc.by));
+  return g.join(' ');
+}
+const npSubOf=id=>{ const cc=(STATE.charts||[]).find(x=>x.id===id);
+  if(cc) return 'My chart · '+ccName(cc.measure,cc.by);
+  const t=GRAPH_TREE.find(x=>x.id===id); return t&&t.note?t.note:(METRICS[id].kind==='chart'?'Chart':'Card'); };
+/* Suggestions for the "add more" search: what is not on the page yet, best match first. */
+function npSug(q){
+  const have=new Set(npSrcCards().map(c=>c.id)), qq=q.trim();
+  const hit=allMetricIds().filter(id=>!id.startsWith('__')&&!have.has(id))
+    .map(id=>({id,s:fzScore(METRICS[id].title,qq,npAliasOf(id)),c:METRICS[id].custom?1:0}))
+    .filter(x=>x.s>0).sort((a,b)=>qq?b.s-a.s:b.c-a.c).slice(0,qq?8:6);
+  if(!hit.length) return `<div class="eq-none">${qq?`Nothing matches “${esc(qq)}”`:'Everything is already on this page'}</div>`;
+  return `<div class="eq-hd">${qq?hit.length+(hit.length>1?' matches':' match'):'Suggestions'}</div>`+
+    hit.map(({id},i)=>`<button type="button" class="np-s${i?'':' on'}" data-npadd="${id}">
+      <span class="eq-t"><b>${eqMark(METRICS[id].title,qq)}</b><small>${esc(npSubOf(id))}</small></span><span class="eq-plus">+</span></button>`).join('');
+}
+function npCards(){ return npSrcCards().filter(c=>!NP.off.has(c.id)); }
 
 function drawNP(){
   $$('.np-opt',npWrap).forEach(b=>b.classList.toggle('on',b.dataset.np===NP.mode));
   $('#npTitle').textContent = NP.mode==='new' ? 'Create New Profile' : 'Save Over Old Profile';
   if(NP.mode==='new'){
+    const src=NP.src||'current';
     $('#npField').innerHTML=
-      `<input id="npName" type="text" placeholder="Name this profile" aria-label="Profile name">`;
+      `<input id="npName" type="text" placeholder="Name this profile" aria-label="Profile name" value="${esc(NP.name||'')}">
+       <label class="np-lbl" for="npSrc">Start from</label>
+       <select id="npSrc" aria-label="Start this profile from">
+         <option value="current"${src==='current'?' selected':''}>The board as it is now</option>
+         <option value="blank"${src==='blank'?' selected':''}>A blank page</option>
+         <optgroup label="A template">${PROFILE_TYPES.map(t=>`<option value="tpl:${esc(t)}"${src==='tpl:'+t?' selected':''}>${esc(t)}</option>`).join('')}</optgroup>
+         <optgroup label="A copy of">${STATE.profiles.map(pr=>`<option value="prof:${pr.id}"${src==='prof:'+pr.id?' selected':''}>${esc(pr.name)}</option>`).join('')}</optgroup>
+       </select>`;
+    $('#npSrc').onchange=ev=>{
+      const nm=$('#npName'), v=ev.target.value;
+      if(nm&&(!nm.value.trim()||nm.value===NP.auto)) {
+        const pr=v.startsWith('prof:')&&STATE.profiles.find(x=>x.id===v.slice(5));
+        NP.auto = pr ? 'Copy of '+pr.name : v.startsWith('tpl:') ? v.slice(4).replace(/ Profile$/,'')+' (copy)' : '';
+        NP.name=NP.auto;
+      } else NP.name=nm?nm.value:'';
+      NP.src=v; NP.off=new Set(); drawNP();
+    };
   } else {
     const sel=NP.target||(STATE.profiles[0]||{}).id;
     const cur=STATE.profiles.find(x=>x.id===sel)||{name:''};
@@ -3955,17 +4097,22 @@ function drawNP(){
     const t=$('#npTarget');
     t.onchange=()=>{ NP.target=t.value; drawNP(); };
   }
-  npList.innerHTML=active().cards.map(c=>{
+  const keepQ=($('#npAddQ')||{}).value||'';
+  npList.innerHTML=`<div class="np-add">
+      <input id="npAddQ" type="search" placeholder="Add more charts — try “revenue” or “fuel”" autocomplete="off"
+        aria-label="Search charts and cards to add" value="${esc(keepQ)}">
+      <div class="np-sug" id="npSug">${npSug(keepQ)}</div></div>`+npSrcCards().map(c=>{
     const m=METRICS[c.id]; if(!m) return '';
     return `<label class="np-crow"><input type="checkbox" data-np-card="${c.id}"
       ${NP.off.has(c.id)?'':'checked'}> ${esc(m.title)}</label>`;
-  }).join('') || '<p class="dk-none">This page has no cards yet.</p>';
+  }).join('') || '<p class="dk-none">A blank page has no cards yet &mdash; add them with Graphs once it is saved.</p>';
   $('#npCount').textContent=npCards().length;
 }
 
 function saveNewProfile(){
   const cards=npCards().map(x=>({...x}));
-  if(!cards.length){ toast('Pick at least one card to save'); return; }
+  const blank=NP.mode==='new'&&NP.src==='blank';
+  if(!cards.length&&!blank){ toast('Pick at least one card to save'); return; }
   if(NP.mode==='new'){
     const inp=$('#npName'), name=(inp.value||'').trim();
     if(!name){ inp.focus(); toast('Give the profile a name first'); return; }
@@ -3996,6 +4143,33 @@ if(npWrap){
       t.setAttribute('aria-expanded',String(on)); return;
     }
     if(ev.target.closest('#npSave')){ saveNewProfile(); return; }
+  });
+  const npAdd=id=>{
+    if(!id||!METRICS[id]) return;
+    (NP.extra=NP.extra||[]).push(id); NP.off.delete(id);
+    const keep=($('#npAddQ')||{}).value||'';
+    drawNP();
+    const q=$('#npAddQ'); if(q){ q.value=''; $('#npSug').innerHTML=npSug(''); q.focus(); }
+    toast(`Added <b>${esc(METRICS[id].title)}</b> to this profile`);
+  };
+  npWrap.addEventListener('click',ev=>{
+    const a=ev.target.closest('[data-npadd]'); if(a){ ev.stopPropagation(); npAdd(a.dataset.npadd); }
+  },true);
+  npWrap.addEventListener('input',ev=>{
+    if(ev.target.id!=='npAddQ') return;
+    $('#npSug').innerHTML=npSug(ev.target.value);
+  });
+  npWrap.addEventListener('keydown',ev=>{
+    if(ev.target.id!=='npAddQ') return;
+    const rows=$$('.np-s',npWrap);
+    if(ev.key==='ArrowDown'||ev.key==='ArrowUp'){
+      ev.preventDefault(); if(!rows.length) return;
+      const at=Math.max(0,rows.findIndex(r=>r.classList.contains('on')));
+      const nx=(at+(ev.key==='ArrowDown'?1:-1)+rows.length)%rows.length;
+      rows.forEach((r,i)=>r.classList.toggle('on',i===nx)); rows[nx].scrollIntoView({block:'nearest'});
+    } else if(ev.key==='Enter'){ ev.preventDefault(); ev.stopPropagation();
+      const f=rows.find(r=>r.classList.contains('on')); if(f) npAdd(f.dataset.npadd);
+    } else if(ev.key==='Escape'&&ev.target.value){ ev.stopPropagation(); ev.target.value=''; $('#npSug').innerHTML=npSug(''); }
   });
   npWrap.addEventListener('change',ev=>{
     const cb=ev.target.closest('[data-np-card]'); if(!cb) return;
@@ -4857,23 +5031,77 @@ function renderCreateName(){
   const el=$('#btnCreateName'), p=active();
   if(el) el.textContent = p ? p.name : 'Create Profile';
 }
-function renderCreateMenu(){
-  const rows=STATE.profiles.map(pr=>{
-    const custom = pr.type==='Custom';          // only user-made pages can be removed
-    const tag = pr.id===STATE.defaultId ? ' &middot; default' : '';
-    return `<div class="pitem${pr.id===STATE.activeId?' on':''}">
+/* One line under each name says who the page is for, so the names alone do not
+   have to carry it. Pages you make yourself show their card count instead. */
+const PROFILE_INFO={
+  'General Profile (Default)':['Roles','Everyday board: messages, goals, gross'],
+  'Accounting Profile':['Roles','Revenue, goals and driver pay'],
+  'Customer Profile':['Roles','Customers, loads in transit, messages'],
+  'Dispatcher Profile':['Roles','Messages, status, equipment and gross'],
+  'Executive Profile':['Roles','Goals, revenue and company stats'],
+  'Maintenance Profile':['Roles','Fleet, equipment cost and loads'],
+  'Manager Profile':['Roles','Teams, drivers, fleet and positions'],
+  'Recruiter Profile':['Roles','Drivers, time off and owner operators'],
+  'Safety Profile':['Roles','Status, analytics, news and fleet'],
+  'Salesman Profile':['Roles','Customers, teams and trailer revenue'],
+  'Fleet Health Profile':['Views','Equipment cost, fleet and trailers'],
+  'Goals Profile':['Views','Actual against goal at a glance'],
+  'Top Performance Profile':['Views','Leaderboards, fuel and idle time']
+};
+const PGROUPS=['Favourites','Roles','Views','My profiles'];
+const profGroup=pr=>pr.type==='Custom'?'My profiles':((PROFILE_INFO[pr.type]||[])[0]||'Roles');
+const profDesc=pr=>pr.type==='Custom'
+  ? pr.cards.length+' card'+(pr.cards.length===1?'':'s')
+  : ((PROFILE_INFO[pr.type]||[])[1]||'');
+let PQ='';                                   // the profile search, kept across redraws
+function profRow(pr){
+  const custom = pr.type==='Custom';          // only user-made pages can be removed
+  const fav=(STATE.favs||[]).includes(pr.id);
+  const tag = pr.id===STATE.defaultId ? ' &middot; default' : '';
+  const q=(pr.name+' '+profDesc(pr)).toLowerCase();
+  return `<div class="pitem${pr.id===STATE.activeId?' on':''}" data-q="${esc(q)}">
       <button class="prow" data-go="${pr.id}">
-        <span class="nm">${esc(pr.name)}</span><span class="tag">${tag}</span>
+        <span class="pt"><span class="nm">${esc(pr.name)}</span><span class="pd">${esc(profDesc(pr))}</span></span>
+        <span class="tag">${tag}</span>
       </button>
+      <button class="pfav${fav?' on':''}" data-fav="${pr.id}" aria-pressed="${fav}"
+        title="${fav?'Remove from favourites':'Add to favourites'}"
+        aria-label="${fav?'Remove':'Add'} ${esc(pr.name)} ${fav?'from':'to'} favourites">${svg('star',13,1.9)}</button>
       <button class="pedit" data-edit="${pr.id}" title="Edit ${esc(pr.name)}"
         aria-label="Edit ${esc(pr.name)}">${svg('pencil',13,1.9)}</button>
       ${custom?`<button class="pdel" data-del="${pr.id}" title="Remove ${esc(pr.name)}"
         aria-label="Remove ${esc(pr.name)}">${svg('x',13,2.2)}</button>`:''}
     </div>`;
-  }).join('');
+}
+/* Hide what the search rules out, and any heading left with nothing under it. */
+function filterProfiles(){
+  const q=PQ.trim().toLowerCase();
+  let shown=0;
+  $$('.pitem',menuCreate).forEach(r=>{
+    const ok=!q||q.split(/\s+/).every(w=>r.dataset.q.includes(w));
+    r.hidden=!ok; if(ok) shown++;
+  });
+  $$('.pgroup',menuCreate).forEach(h=>{
+    let n=h.nextElementSibling, any=false;
+    while(n&&n.classList.contains('pitem')){ if(!n.hidden) any=true; n=n.nextElementSibling; }
+    h.hidden=!any;
+  });
+  const none=$('.pnone',menuCreate); if(none) none.hidden=shown>0;
+}
+function renderCreateMenu(){
+  const favs=STATE.favs||[];
+  const byName=(a,b)=>a.name.startsWith('General')?-1:b.name.startsWith('General')?1:a.name.localeCompare(b.name);
+  const grp={Favourites:[],Roles:[],Views:[],'My profiles':[]};
+  STATE.profiles.forEach(pr=>{ (favs.includes(pr.id)?grp.Favourites:grp[profGroup(pr)]||grp.Roles).push(pr); });
+  const rows=PGROUPS.filter(g=>grp[g].length).map(g=>
+    `<h5 class="pgroup">${g==='Favourites'?svg('star',11,2)+' ':''}${g}</h5>`+
+    (g==='My profiles'?grp[g]:grp[g].sort(byName)).map(profRow).join('')).join('');
+  const had=document.activeElement&&document.activeElement.id==='pSearch';
   menuCreate.innerHTML=`
-    <h5>Load A Profile</h5>
+    <div class="psearch"><input id="pSearch" type="search" placeholder="Search profiles" autocomplete="off"
+      aria-label="Search profiles" value="${esc(PQ)}"></div>
     ${rows}
+    <div class="pnone" hidden>No profile matches that.</div>
     <button class="padd" id="pAdd">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       Add Profile
@@ -4882,7 +5110,28 @@ function renderCreateMenu(){
       <button data-act="default">Set As My Default</button>
       <button data-act="reset">Reset This Page</button>
     </div>`;
+  filterProfiles();
+  if(had){ const s=$('#pSearch'); if(s){ s.focus(); s.setSelectionRange(s.value.length,s.value.length); } }
 }
+menuCreate.addEventListener('input',e=>{
+  if(e.target.id!=='pSearch') return;
+  PQ=e.target.value; filterProfiles();
+});
+menuCreate.addEventListener('keydown',e=>{
+  if(e.target.id!=='pSearch') return;
+  if(e.key==='Enter'){ const f=$$('.pitem',menuCreate).find(r=>!r.hidden); if(f){ e.preventDefault(); $('.prow',f).click(); } }
+  if(e.key==='Escape'&&PQ){ e.stopPropagation(); PQ=''; e.target.value=''; filterProfiles(); }
+});
+menuCreate.addEventListener('click',e=>{
+  const fv=e.target.closest('[data-fav]'); if(!fv) return;
+  e.stopImmediatePropagation(); e.stopPropagation();
+  const id=fv.dataset.fav, favs=STATE.favs=(STATE.favs||[]).slice();
+  const at=favs.indexOf(id);
+  if(at>=0) favs.splice(at,1); else favs.push(id);
+  saveState(); renderCreateMenu();
+  const pr=STATE.profiles.find(x=>x.id===id);
+  toast(at>=0?`Removed <b>${esc(pr.name)}</b> from favourites`:`<b>${esc(pr.name)}</b> is now a favourite`);
+});
 function toggleCreateMenu(on){
   const show = on ?? !menuCreate.classList.contains('show');
   menuCreate.classList.toggle('show',show);
@@ -5037,10 +5286,11 @@ const eqLev=(a,b)=>{ const d=Array.from({length:a.length+1},(_,i)=>[i]);
 /* Rank one type against the typed text. Every word you type has to land
    somewhere; the best landing wins: start of the name, then inside it, then
    an alias, then a typo, then letters in order ("stpd"). 0 means no match. */
-function eqScore(name,q){
+function eqScore(name,q){ return fzScore(name,q,(EQ_INFO[name]||[])[1]||''); }
+function fzScore(name,q,aliases){
   const toks=q.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); if(!toks.length) return 1;
   const low=name.toLowerCase(), words=low.split(/[^a-z0-9]+/), comp=low.replace(/[^a-z0-9]/g,'');
-  const al=((EQ_INFO[name]||[])[1]||'').split(' ');
+  const al=(aliases||'').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
   let tot=0;
   for(const t of toks){
     let s=0;
@@ -5230,6 +5480,7 @@ function openOpt(card,btn,src){
       const co=cardOpt(optCard);
       if(v==='') delete co[k]; else co[k]=v;
       optCard.dataset.opt=JSON.stringify(co);
+      if(k==='color') applyCardColor(optCard);
       syncCards();
       const mm=METRICS[optCard.dataset.id]||{};
       if(k==='type' && mm.spec && mm.kind!=='chart'){   // body <-> chart swap
@@ -5376,8 +5627,125 @@ function closeDrawer(){ drawer.classList.remove('show'); scrim.classList.remove(
 $('#drawerClose').addEventListener('click',closeDrawer);
 scrim.addEventListener('click',closeDrawer);
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){
+  if(ccWrap&&ccWrap.classList.contains('show')){ closeCC(); return; }
   closeDrawer(); toggleCreateMenu(false); closeOpt();
   toggleGPanel(false); closeMaster(); } });
+
+/* ===========================================================================
+   CUSTOM CHARTS
+   A chart is two choices and a look: what to measure, how to break it down,
+   and how to draw it. Only the pairings the data can answer are offered, so
+   there is no way to build an empty chart. Range, period, colour, labels and
+   the equipment filter are not asked again — they live on the chart's own
+   graph icon like every other card.
+   ======================================================================== */
+const CC_MEASURES=[['revenue','Revenue'],['cpm','CPM'],['occ','Occupancy'],['loads','Loads in transit'],['units','Trailer units']];
+const CC_BY=[['time','Over time'],['equip','Equipment type'],['customer','Customer'],['team','Team'],['truck','Truck']];
+const CC_SRC={'revenue.time':'revenue','revenue.equip':'revenueByTrailerType','revenue.customer':'revCustomer',
+  'revenue.team':'revenueByTeam','revenue.truck':'fleetPerf','cpm.time':'cpm','cpm.equip':'cpmEquip',
+  'occ.time':'occupancy','loads.time':'loadsInTransit','units.equip':'trailerType'};
+const CC_TYPES={time:[['area','Area'],['line','Line'],['bar','Bars']],
+                cat:[['bar','Bars'],['hbar','Horizontal bars'],['doughnut','Doughnut']]};
+const ccGroup=by=>by==='time'?'time':'cat';
+const ccLabel=(list,k)=>(list.find(x=>x[0]===k)||['',''])[1];
+const ccName=(m,b)=>b==='time'?ccLabel(CC_MEASURES,m)+' over time':ccLabel(CC_MEASURES,m)+' by '+ccLabel(CC_BY,b).toLowerCase();
+function registerChart(cc){
+  const src=CC_SRC[cc.measure+'.'+cc.by]; if(!src||!METRICS[src]) return;
+  const cat=cc.by!=='time', types=['',...CC_TYPES[ccGroup(cc.by)].map(x=>x[0])];
+  METRICS[cc.id]={title:cc.title,span:8,h:296,period:1,kind:'chart',custom:1,defType:cc.type,byCat:cat,
+    only:cat?{types,panes:['range','equip','type','color','labels','sort']}:{types:[...types,'curve']},
+    spec:()=>{ const s=METRICS[src].spec(); return cat?{...s,type:'bar'}:s; }};
+}
+function registerCharts(){ (STATE.charts||[]).forEach(registerChart); }
+
+const ccWrap=$('#ccWrap');
+let CC=null;
+const ccValid=(m,b)=>!!CC_SRC[m+'.'+b];
+function openChartBuilder(editId){
+  const ex=editId&&(STATE.charts||[]).find(x=>x.id===editId);
+  CC=ex?{...ex,edit:ex.id,auto:''}:{measure:'revenue',by:'time',type:'area',title:'',auto:'',edit:null};
+  if(!ex){ CC.title=CC.auto=ccName(CC.measure,CC.by); }
+  $('#ccTitle').textContent=ex?'Edit chart':'Create a chart';
+  $('#ccSave').textContent=ex?'Save changes':'Add to this page';
+  $('#ccDel').hidden=!ex; $('#ccDel').textContent='Delete chart';
+  drawCC(); ccWrap.classList.add('show');
+  setTimeout(ccPreview,60);
+}
+function closeCC(){ ccWrap.classList.remove('show'); delete METRICS.__cc_prev; $('#ccPrev').innerHTML=''; CC=null; }
+function chipRow(list,cur,key,dis){
+  return `<div class="cc-chips">${list.map(([k,l])=>{
+    const off=dis&&dis(k);
+    return `<button type="button" class="cc-chip${k===cur?' on':''}" data-cc="${key}" data-v="${k}"${off?` disabled title="${esc(off)}"`:''}>${esc(l)}</button>`;
+  }).join('')}</div>`;
+}
+function drawCC(){
+  const g=ccGroup(CC.by);
+  $('#ccBody').innerHTML=`
+    <div class="cc-f"><b>1. What do you want to see?</b>
+      ${chipRow(CC_MEASURES,CC.measure,'measure')}</div>
+    <div class="cc-f"><b>2. Broken down by</b>
+      ${chipRow(CC_BY,CC.by,'by',k=>ccValid(CC.measure,k)?'':`${ccLabel(CC_MEASURES,CC.measure)} is not available by ${ccLabel(CC_BY,k).toLowerCase()}`)}</div>
+    <div class="cc-f"><b>3. Show it as</b>
+      ${chipRow(CC_TYPES[g],CC.type,'type')}</div>
+    <div class="cc-f"><b>Name</b>
+      <input id="ccName" type="text" maxlength="48" value="${esc(CC.title)}" aria-label="Chart name"></div>
+    <p class="cc-hint">Date range, colours, labels and the equipment filter are on the chart's graph icon once it is on the page.</p>`;
+}
+function ccPreview(){
+  if(!CC) return;
+  const box=$('#ccPrev'); delete METRICS.__cc_prev;
+  registerChart({...CC,id:'__cc_prev'});
+  if(!METRICS.__cc_prev){ box.innerHTML=''; return; }
+  box.innerHTML='<section class="card ccp" data-id="__cc_prev" data-opt="{}"><div class="chart-wrap" data-metric="__cc_prev"></div></section>';
+  requestAnimationFrame(()=>{ const w=$('.chart-wrap',box); if(w) paint(w,true); });
+}
+ccWrap.addEventListener('click',ev=>{
+  if(ev.target===ccWrap||ev.target.closest('#ccClose')||ev.target.closest('#ccCancel')){ closeCC(); return; }
+  if(ev.target.closest('#ccSave')){ saveChart(); return; }
+  const del=ev.target.closest('#ccDel');
+  if(del){
+    if(!del.dataset.sure){ del.dataset.sure='1'; del.textContent='Click again to delete';
+      setTimeout(()=>{ delete del.dataset.sure; del.textContent='Delete chart'; },3000); return; }
+    deleteChart(CC.edit); return;
+  }
+  const b=ev.target.closest('[data-cc]'); if(!b||b.disabled) return;
+  const k=b.dataset.cc, v=b.dataset.v, before=CC.auto;
+  if(k==='measure'){
+    CC.measure=v;
+    if(!ccValid(CC.measure,CC.by)) CC.by=CC_BY.find(([x])=>ccValid(v,x))[0];
+  }
+  if(k==='by') CC.by=v;
+  if(k==='measure'||k==='by'){
+    const ok=CC_TYPES[ccGroup(CC.by)].some(x=>x[0]===CC.type);
+    if(!ok||k==='by') CC.type=CC_TYPES[ccGroup(CC.by)][0][0];
+    if(!CC.title.trim()||CC.title===before) CC.title=CC.auto=ccName(CC.measure,CC.by);   // keep a name the user typed
+    else CC.auto=ccName(CC.measure,CC.by);
+  }
+  if(k==='type') CC.type=v;
+  drawCC(); ccPreview();
+});
+ccWrap.addEventListener('input',ev=>{ if(ev.target.id==='ccName'&&CC) CC.title=ev.target.value; });
+ccWrap.addEventListener('keydown',ev=>{ if(ev.key==='Enter'&&ev.target.id==='ccName'){ ev.preventDefault(); saveChart(); } });
+function saveChart(){
+  if(!CC) return;
+  const rec={id:CC.edit||'cc_'+uid(),title:(CC.title||'').trim()||ccName(CC.measure,CC.by),
+             measure:CC.measure,by:CC.by,type:CC.type};
+  const editing=!!CC.edit;
+  STATE.charts=(STATE.charts||[]).slice();
+  const at=STATE.charts.findIndex(x=>x.id===rec.id);
+  if(at>=0) STATE.charts[at]=rec; else STATE.charts.push(rec);
+  registerChart(rec); closeCC();
+  if(editing){ saveState(); renderBoard(); renderDrawer(); toast(`Saved <b>${esc(rec.title)}</b>`); }
+  else addMetric(rec.id);
+}
+function deleteChart(id){
+  const rec=(STATE.charts||[]).find(x=>x.id===id); if(!rec) return;
+  STATE.charts=STATE.charts.filter(x=>x.id!==id);
+  STATE.profiles.forEach(p=>{ p.cards=p.cards.filter(c=>c.id!==id); });
+  delete METRICS[id]; closeCC();
+  saveState(); renderBoard(); renderDrawer(); renderGPanel();
+  toast(`Deleted <b>${esc(rec.title)}</b>`);
+}
 
 function onBoard(id){ return active().cards.some(x=>x.id===id); }
 const CHK='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>';
@@ -5403,7 +5771,17 @@ function renderDrawer(){
     return row+sub;
   }).join('');
   /* the cards that are not graphs — messages, time off, news and the rest */
-  const rest=allMetricIds().filter(id=>!inTree.has(id));
+  const rest=allMetricIds().filter(id=>!inTree.has(id)&&!METRICS[id].custom&&!id.startsWith('__'));
+  const mine=`<div class="dgroup">My charts</div>`+(STATE.charts||[]).filter(c=>METRICS[c.id]).map(cc=>{
+    const added=onBoard(cc.id);
+    return `<div class="gitem${added?' added':''}" data-add="${cc.id}">
+        <span class="gi">${svg('chart',17,1.7)}</span>
+        <span class="gn">${esc(cc.title)}<span style="display:block;font-weight:450;font-size:10.5px;color:var(--ink-3)">${esc(ccName(cc.measure,cc.by))}</span></span>
+        <button type="button" class="dedit" data-ccedit="${cc.id}" title="Edit this chart" aria-label="Edit ${esc(cc.title)}">${svg('pencil',13,1.9)}</button>
+        <span class="dchk${added?' on':''}">${CHK}</span></div>`;
+  }).join('')+`<div class="gitem cc-new" data-ccnew="1">
+        <span class="gi">${svg('plus',17,2)}</span>
+        <span class="gn">Create a chart<span style="display:block;font-weight:450;font-size:10.5px;color:var(--ink-3)">Pick what to measure and how to show it</span></span></div>`;
   const other=rest.length?`<div class="dgroup">Page cards</div>`+rest.map(id=>{
     const added=onBoard(id);
     return `<div class="gitem${added?' added':''}" data-add="${id}">
@@ -5411,7 +5789,7 @@ function renderDrawer(){
         <span class="gn">${esc(METRICS[id].title)}</span>
         <span class="dchk${added?' on':''}">${CHK}</span></div>`;
   }).join(''):'';
-  $('#dlist').innerHTML=`<div class="dgroup">Graphs by category</div>`+tree+other;
+  $('#dlist').innerHTML=mine+`<div class="dgroup">Graphs by category</div>`+tree+other;
   $('#dlist').scrollTop=keep;
   const n=active().cards.length;
   $('#dcount').textContent=`${n} of ${allMetricIds().length} on this page`;
@@ -5431,6 +5809,9 @@ $('#dlist').addEventListener('click',ev=>{
     sub.classList.toggle('show'); row.classList.toggle('open');
     return;
   }
+  const ce=ev.target.closest('[data-ccedit]');
+  if(ce){ ev.stopPropagation(); openChartBuilder(ce.dataset.ccedit); return; }
+  if(ev.target.closest('[data-ccnew]')){ openChartBuilder(); return; }
   const it=ev.target.closest('[data-add]'); if(!it) return;
   const id=it.dataset.add;
   if(onBoard(id)){                                  // ticked: untick takes it off
@@ -5622,7 +6003,7 @@ btnTheme.addEventListener('click',async()=>{
   const saved=await Store.get('dpt.theme');
   applyTheme(saved ? saved==='dark'
                    : matchMedia('(prefers-color-scheme:dark)').matches);
-  await loadState();
+  await loadState(); registerCharts();
   if(STATE.defaultId && STATE.profiles.some(p=>p.id===STATE.defaultId)) STATE.activeId=STATE.defaultId;
   $('#cRange').value=STATE.range||'today';
   const ck=await Store.get('dpt.clock'); if(ck) CLOCK=ck;
