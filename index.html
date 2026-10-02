@@ -2654,7 +2654,7 @@ function effOpt(card){
   const M=master();
   const met=(card&&METRICS[card.dataset.id])||null;
   let co={}; try{ co=JSON.parse((card&&card.dataset.opt)||'{}'); }catch(err){}
-  let type=co.type||M.type;
+  let type=co.type||M.type||(met&&met.defType)||'';
   if(!typeAllow(met,type)) type=(met.only.types||[''])[0];   // master cannot force it
   return {
     period: co.period || M.period,
@@ -3487,7 +3487,7 @@ SER.delivered=(()=>{                       // the year's revenue, scaled to land
 })();
 /* Same shape as Gross By Equipment Type: a KPI and one bar chart. The
    linehaul / fuel split rides in the hover card as the breakdown. */
-METRICS.revDelivered={ title:'Revenue Delivered', span:12, h:310, period:1, kind:'chart',
+METRICS.revDelivered={ title:'Revenue Delivered', span:12, h:310, period:1, kind:'chart', defType:'area',
   kpi:{v:'$ '+RD_TOTAL.toLocaleString('en-US'),d:'\u2014',dir:'up'},
   spec:()=>({...tser(SER.delivered,{type:'bar',agg:'sum',slabel:'Delivered',
       fmt:K$,lab:K$,alt:'Revenue delivered'}),
