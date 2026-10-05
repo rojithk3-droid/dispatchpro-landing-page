@@ -3646,14 +3646,12 @@ const GRAPH_TREE=[
    ======================================================================== */
 const c=(id,span,h)=>({id,span,h});
 const TEMPLATES={
-  /* Communication Center holds four row bands in its own column; everything
-     else packs up beside and beneath it. */
-  'General Profile (Default)':[c('comm',6,634,4),
-    c('dashboard',6,310,2),c('timeoff',6,310,2),c('news',6,310,2),
-    c('goals',6,310,2),c('analytics',6,310,2),c('status',6,310,2),
-    c('cpmEquip',6,310,2),c('fleetPerf',6,310,2),c('pole',6,310,2),
-    c('grossEquip',12,310,2),{...c('revDelivered',12,310),opt:{range:'ytd',period:'Weeks'}},c('kgRpm',6,310),c('kgOcc',6,310),c('kgLine',6,310),c('kgTrucks',6,310)],
-
+  /* Initial general view, traced from the recorded layout: 4 columns x 5 rows, 17 cards. */
+  'General Profile (Default)':[c('comm',6,310,2),c('dashboard',6,310,2),c('timeoff',6,310,2),c('news',6,310,2),
+    c('cpmEquip',6,310,2),c('goals',6,310,2),c('analytics',6,310,2),c('status',6,310,2),
+    c('fleetPerf',6,310,2),c('pole',6,310,2),{...c('revDelivered',12,310),opt:{range:'ytd',period:'Weeks'}},
+    c('grossEquip',12,310,2),c('kgRpm',6,310),c('kgOcc',6,310),
+    c('kgLine',6,310),c('kgTrucks',6,310),c('cpm',12,310,2)],
   'Accounting Profile':[c('revenue',12,300),c('revenueActualGoal',12,300),
     c('revCustomer',8,296),c('cpm',8,296),c('companyStats',8,296),
     c('revCompanyDrivers',12,296),c('revOwnerOps',12,296)],
@@ -3709,7 +3707,7 @@ const USER={first:'Christian',last:'Snead'};
 USER.name=`${USER.first} ${USER.last}`;
 USER.initials=(USER.first[0]+USER.last[0]).toUpperCase();
 
-const SCHEMA=13;          // bump when TEMPLATES or card defaults change
+const SCHEMA=14;         // bump when TEMPLATES or card defaults change
 const BOARD_COLS=24;
 const DROP_TAIL=220;      // how far under the last card still counts as the board
 const ROW_U=148, ROW_GAP=14;            // must match --rowu and --gap
