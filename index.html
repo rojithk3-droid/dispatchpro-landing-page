@@ -150,9 +150,9 @@ button,input,select{font-family:inherit;font-size:13px;color:inherit}
 .anim-barh{transform-box:fill-box;transform-origin:left;transform:scaleX(0)}
 .anim-line{stroke-dasharray:1;stroke-dashoffset:1}
 .anim-dot,.anim-txt{opacity:0}
-.in .anim-bar{animation:barIn .8s cubic-bezier(.22,.9,.3,1) both}
-.in .anim-barh{animation:barInH .8s cubic-bezier(.22,.9,.3,1) both}
-.in .anim-line{animation:lineIn 1.1s cubic-bezier(.4,.6,.3,1) both}
+.in .anim-bar{animation:barIn .7s cubic-bezier(.22,.9,.3,1) both}
+.in .anim-barh{animation:barInH .7s cubic-bezier(.22,.9,.3,1) both}
+.in .anim-line{animation:lineIn .9s cubic-bezier(.4,.6,.3,1) both}
 .in .anim-dot{animation:fadeIn .4s ease .55s both}
 .in .anim-txt{animation:fadeIn .45s ease .75s both}
 .card.fresh{animation:cardIn .42s cubic-bezier(.22,.9,.3,1) both}
@@ -163,7 +163,7 @@ button,input,select{font-family:inherit;font-size:13px;color:inherit}
 .card[data-gc].card .rails .rail-bar:hover i,.card[data-gc].card .rails .fp:hover .rail-bar i,
 .card[data-gc].card .rails .hb:hover .rail-bar i,.card[data-gc].card .rails .goalrow:hover .rail-bar i{filter:drop-shadow(0 0 6px var(--gc))}
 .card[data-gc].card .kg{color:var(--gc)}
-.in .rail-bar i{animation:growW 1s cubic-bezier(.22,.9,.3,1) both}
+.in .rail-bar i{animation:growW .8s cubic-bezier(.22,.9,.3,1) both}
 
 @media (prefers-reduced-motion:reduce){
   .card:hover{animation:none;background:var(--card-bg);border-color:var(--blue-line)}
@@ -3857,18 +3857,23 @@ function buildCard(cd){
     <span class="rsz" title="Drag to resize"></span>`;
   return el;
 }
-
-/* Cards play their entrance (bars, lines, rails, count-up) only once they
-   scroll into view, so charts below the fold animate when the user reaches
-   them instead of all at page load. */
-const revealIO=('IntersectionObserver' in window)?new IntersectionObserver(ents=>ents.forEach(en=>{
-  if(!en.isIntersecting) return;
-  revealIO.unobserve(en.target);
-  playCard(en.target);
-}),{threshold:.2}):null;
+/* Cards play their entrance (bars, lines, rails, count-up) as they scroll
+   into view. The trigger zone reaches 15% below the fold so the animation is
+   already under way when a card arrives, and cards revealed in the same pass
+   are staggered slightly so a fast scroll reads as a smooth cascade. */
+const revealIO=('IntersectionObserver' in window)?new IntersectionObserver(ents=>{
+  let k=0;
+  ents.filter(en=>en.isIntersecting)
+      .sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top)
+      .forEach(en=>{
+        revealIO.unobserve(en.target);
+        const t=en.target;
+        setTimeout(()=>{ if(t.isConnected) playCard(t); },Math.min(k++,5)*70);
+      });
+},{threshold:0,rootMargin:'0px 0px 15% 0px'}):null;
 function playCard(el){
   el.classList.add('in');
-  rollNumbers($$('.roll',el),1500);
+  rollNumbers($$('.roll',el),1100);
 }
 function revealOnScroll(el){
   if(revealIO) revealIO.observe(el); else playCard(el);
