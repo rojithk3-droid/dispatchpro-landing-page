@@ -3856,6 +3856,22 @@ function buildCard(cd){
   return el;
 }
 
+/* Cards play their entrance (bars, lines, rails, count-up) only once they
+   scroll into view, so charts below the fold animate when the user reaches
+   them instead of all at page load. */
+const revealIO=('IntersectionObserver' in window)?new IntersectionObserver(ents=>ents.forEach(en=>{
+  if(!en.isIntersecting) return;
+  revealIO.unobserve(en.target);
+  playCard(en.target);
+}),{threshold:.2}):null;
+function playCard(el){
+  el.classList.add('in');
+  rollNumbers($$('.roll',el),1500);
+}
+function revealOnScroll(el){
+  if(revealIO) revealIO.observe(el); else playCard(el);
+}
+
 function renderBoard(){
   const p=active();
   board.innerHTML='';
@@ -3869,14 +3885,13 @@ function renderBoard(){
   p.cards.forEach(cd=>{ const el=buildCard(cd); if(el) board.appendChild(el); });
   requestAnimationFrame(()=>{
     $$('.card',board).forEach(el=>{
-      el.classList.add('in');
       const w=$('.chart-wrap',el);
       if(w){ delete w.dataset.drawn; chartRO.observe(w); }
+      revealOnScroll(el);
     });
     equalizeRows();
     updateRangeLabels();
     $$('.newscard',board).forEach(c=>{ delete c.dataset.sky; });  // force a repaint
-    rollNumbers($$('.roll',board),1500);
     tickClock();
     setTimeout(()=>$$('.card.fresh',board).forEach(el=>el.classList.remove('fresh')),600);
   });
@@ -4017,10 +4032,9 @@ function rebuildCard(card){
   el.style.height=card.style.height;
   if(card.dataset.uh) el.dataset.uh=card.dataset.uh;
   card.replaceWith(el);
-  el.classList.add('in');
   const w=$('.chart-wrap',el);
   if(w){ delete w.dataset.drawn; chartRO.observe(w); }
-  rollNumbers($$('.roll',el),900);
+  revealOnScroll(el);
   updateRangeLabels();
   return el;
 }
