@@ -3777,7 +3777,9 @@ function paint(wrap,anim){
   sp.trend = o.trend;
   drawChart(wrap,sp,r.width,r.height);
   if(!wrap._wired){ wireHover(wrap); wrap._wired=1; }
-  if(!anim) $$('[class*="anim-"]',wrap).forEach(n=>{
+  // a repaint (resize) before the card has scrolled into view must keep the
+  // entrance classes, otherwise the chart would never animate on reveal
+  if(!anim && wrap.closest('.card.in')) $$('[class*="anim-"]',wrap).forEach(n=>{
     n.setAttribute('class',n.getAttribute('class').replace(/anim-[a-z]+/g,'').trim());
     n.removeAttribute('style');
   });
